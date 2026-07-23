@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Sensitive files
+.env
+.env.local
+.env.development
+.env.production
+.env.example
+
+# Archives
+*.zip
+*.tar.gz
+*.tgz

@@ -2,13 +2,16 @@ import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import SkeletonCard from '../components/ui/SkeletonCard';
 
-// Lazy loading pages for optimized performance
 const Home = lazy(() => import('../pages/Home'));
 const Category = lazy(() => import('../pages/Category'));
 const News = lazy(() => import('../pages/News'));
 const NotFound = lazy(() => import('../pages/NotFound'));
+const Admin = lazy(() => import('../pages/Admin'));
+const Contact = lazy(() => import('../pages/Contact'));
+const About = lazy(() => import('../pages/About'));
+const Privacy = lazy(() => import('../pages/Privacy'));
+const Disclaimer = lazy(() => import('../pages/Disclaimer'));
 
-// Page skeleton loader wrapper
 function PageLoader() {
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-6">
@@ -29,6 +32,11 @@ export default function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/category/:categoryName" element={<Category />} />
         <Route path="/news/:id" element={<News />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/privacy-policy" element={<Privacy />} />
+        <Route path="/disclaimer" element={<Disclaimer />} />
+        <Route path="/admin/*" element={<Admin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

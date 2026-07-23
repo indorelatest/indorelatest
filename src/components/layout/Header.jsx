@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Search, Calendar, Globe, ChevronDown } from 'lucide-react';
+import { Menu, X, Search, Calendar, Globe, ChevronDown ,User2} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import DarkModeToggle from '../common/DarkModeToggle';
 import { useLanguage } from '../../context/LanguageContext';
@@ -138,7 +138,15 @@ export default function Header({ onSearchClick }) {
             </AnimatePresence>
           </div>
 
-          {/* Search Button */}
+          {/* Admin Login yaha se kr lega salaaa  */}
+          <button
+            onClick={()=>navigate('/admin')}
+            className="p-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-brand-red dark:hover:text-brand-red hover:border-brand-red/30 transition-all cursor-pointer w-10 h-10 flex items-center justify-center "
+            aria-label="Admin Login"
+          >
+            <User2 className="w-5 h-5" />
+          </button>
+
           <button
             onClick={onSearchClick}
             className="p-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-brand-red dark:hover:text-brand-red hover:border-brand-red/30 transition-all cursor-pointer w-10 h-10 flex items-center justify-center"
@@ -146,7 +154,6 @@ export default function Header({ onSearchClick }) {
           >
             <Search className="w-5 h-5" />
           </button>
-
           {/* Dark Mode Toggle */}
           <DarkModeToggle />
         </div>

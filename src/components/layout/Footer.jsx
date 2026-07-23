@@ -18,11 +18,10 @@ export default function Footer() {
 
   const quickLinks = [
     { name_hi: 'गृह (Home)', name_en: 'Home', path: '/' },
-    { name_hi: 'हमारे बारे में', name_en: 'About Us', path: '#' },
-    { name_hi: 'फीडबैक (Feedback)', name_en: 'Feedback', path: '#' },
-    { name_hi: 'करियर', name_en: 'Careers', path: '#' },
-    { name_hi: 'निजता नीति (Privacy Policy)', name_en: 'Privacy Policy', path: '#' },
-    { name_hi: 'नियम और शर्तें', name_en: 'Terms & Conditions', path: '#' },
+    { name_hi: 'हमारे बारे में (About Us)', name_en: 'About Us', path: '/about' },
+    { name_hi: 'संपर्क करें (Contact Us)', name_en: 'Contact Us', path: '/contact' },
+    { name_hi: 'अस्वीकरण (Disclaimer)', name_en: 'Disclaimer', path: '/disclaimer' },
+    { name_hi: 'निजता नीति (Privacy Policy)', name_en: 'Privacy Policy', path: '/privacy-policy' },
   ];
 
   return (
@@ -105,13 +104,13 @@ export default function Footer() {
           <ul className="space-y-2 text-sm">
             {quickLinks.map((link) => (
               <li key={link.name_en}>
-                <a
-                  href={link.path}
+                <Link
+                  to={link.path}
                   className="hover:text-brand-red transition-colors flex items-center justify-between group"
                 >
                   <span>{link[`name_${lang}`]}</span>
                   <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -147,11 +146,11 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <p>© {new Date().getFullYear()} {t('copyright')}</p>
           <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-brand-red transition-colors">{t('terms')}</a>
+            <Link to="#" className="hover:text-brand-red transition-colors">{t('terms')}</Link>
             <span className="text-zinc-800">|</span>
-            <a href="#" className="hover:text-brand-red transition-colors">{t('privacy')}</a>
+            <Link to="/privacy-policy" className="hover:text-brand-red transition-colors">{t('privacy')}</Link>
             <span className="text-zinc-800">|</span>
-            <a href="#" className="hover:text-brand-red transition-colors">{t('disclosure')}</a>
+            <Link to="/disclaimer" className="hover:text-brand-red transition-colors">{t('disclosure')}</Link>
           </div>
         </div>
       </div>
