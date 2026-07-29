@@ -44,7 +44,7 @@ export default function BreakingNewsTicker({ news = [] }) {
           {[...breakingNews, ...breakingNews].map((item, index) => (
             <Link
               key={`${item.id}-${index}`}
-              to={`/news/${item.id}`}
+              to={`/article/${item.id}`}
               className="text-xs md:text-sm font-semibold tracking-wide hover:underline inline-flex items-center gap-2"
             >
               <span className="w-1.5 h-1.5 bg-white rounded-full inline-block shrink-0" />

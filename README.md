@@ -15,6 +15,37 @@ A bilingual news website prototype serving Indore and Madhya Pradesh, built with
 * **Admin Control Panel**: Control center to manage articles (create, edit, delete), view statistics, check contact form messages, and manage newsletter subscribers.
 * **Contact Forms**: Working feedback and contact submission form.
 
+## First-Time Setup
+
+To get the project up and running quickly on a fresh environment:
+
+1. **Set Up MongoDB**: Create a database cluster in MongoDB Atlas (or use a local MongoDB instance).
+2. **Configure Environment**: 
+   * Copy the template environment configuration to create your local env file:
+     ```bash
+     cp backend/.env.example backend/.env
+     ```
+   * Open `backend/.env` and paste your MongoDB connection string into `MONGO_URI`.
+3. **Install Dependencies**:
+   * Install frontend dependencies in the root folder:
+     ```bash
+     npm install
+     ```
+   * Install backend dependencies in the `backend` folder:
+     ```bash
+     cd backend && npm install && cd ..
+     ```
+4. **Start the Project**:
+   * Start the frontend dev server (from the root folder):
+     ```bash
+     npm run dev
+     ```
+   * Start the backend server (from the `backend` folder):
+     ```bash
+     cd backend && npm start
+     ```
+   *(Note: The server will automatically detect if your database is empty on connection success, and it will self-seed/import the default news articles from `src/data/news.json` without needing manual seed commands!)*
+
 ## Installation & Setup
 
 ### Prerequisites

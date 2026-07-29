@@ -54,7 +54,7 @@ export default function Admin() {
             </div>
             <h1 className="text-2xl font-black text-zinc-900 dark:text-white">Admin Access Gate</h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Enter the administration passcode to manage Daily News.
+              Enter the administration passcode to manage Indore Latest.
             </p>
           </div>
 
@@ -100,7 +100,7 @@ export default function Admin() {
         <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
           <div>
             <h1 className="font-display font-black text-xl text-zinc-900 dark:text-white tracking-wider uppercase">
-              Daily News
+              Indore Latest
             </h1>
             <span className="text-[10px] font-bold text-red-500 tracking-widest uppercase">
               Control Panel

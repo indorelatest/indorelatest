@@ -31,7 +31,14 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/category/:categoryName" element={<Category />} />
-        <Route path="/news/:id" element={<News />} />
+        <Route path="/indore" element={<Category categoryName="इंदौर" />} />
+        <Route path="/madhya-pradesh" element={<Category categoryName="मध्यप्रदेश" />} />
+        <Route path="/india" element={<Category categoryName="देश" />} />
+        <Route path="/world" element={<Category categoryName="विदेश" />} />
+        <Route path="/simhastha" element={<Category categoryName="सिंहस्थ" />} />
+        <Route path="/technology" element={<Category categoryName="टेक्नोलॉजी" />} />
+        <Route path="/jobs-education" element={<Category categoryName="Jobs & Education" />} />
+        <Route path="/article/:id" element={<News />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/privacy-policy" element={<Privacy />} />

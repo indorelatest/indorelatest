@@ -45,7 +45,7 @@ export default function NewsCard({ item }) {
 
         {/* Title / Headline */}
         <h3 className="font-display font-bold text-base md:text-lg text-zinc-900 dark:text-zinc-50 group-hover:text-brand-red transition-colors duration-200 line-clamp-2 leading-snug mb-2 mb-auto">
-          <Link to={`/news/${id}`} className="focus:outline-none">
+          <Link to={`/article/${id}`} className="focus:outline-none">
             {title}
           </Link>
         </h3>
@@ -57,7 +57,7 @@ export default function NewsCard({ item }) {
 
         {/* Read More button */}
         <Link
-          to={`/news/${id}`}
+          to={`/article/${id}`}
           className="inline-flex items-center gap-1 text-xs font-bold text-brand-red hover:text-brand-red-hover transition-colors uppercase tracking-wider mt-auto group-hover:translate-x-1 duration-200"
         >
           <span>{t('readMore')}</span>

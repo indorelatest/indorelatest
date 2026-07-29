@@ -15,6 +15,19 @@ export default function News() {
   const { lang, t } = useLanguage();
   const { getNewsById, getRelatedNews, getTrendingNews, getMostReadNews, getLatestNews, loading } = useNews();
 
+  const getCategorySlug = (catName) => {
+    switch (catName) {
+      case 'इंदौर': return '/indore';
+      case 'मध्यप्रदेश': return '/madhya-pradesh';
+      case 'देश': return '/india';
+      case 'विदेश': return '/world';
+      case 'सिंहस्थ': return '/simhastha';
+      case 'टेक्नोलॉजी': return '/technology';
+      case 'Jobs & Education': return '/jobs-education';
+      default: return `/category/${catName}`;
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
@@ -106,7 +119,7 @@ export default function News() {
             {/* Category tag */}
             <div className="mb-3">
               <Link
-                to={`/category/${article.category_hi}`}
+                to={getCategorySlug(article.category_hi)}
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-red uppercase tracking-wider hover:underline font-sans"
               >
                 <Tag className="w-3.5 h-3.5" />

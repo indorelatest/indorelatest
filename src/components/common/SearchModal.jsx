@@ -36,7 +36,7 @@ export default function SearchModal({ isOpen, onClose, searchNews }) {
 
   const handleResultClick = (id) => {
     onClose();
-    navigate(`/news/${id}`);
+    navigate(`/article/${id}`);
   };
 
   return (

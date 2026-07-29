@@ -6,13 +6,13 @@ export default function Navbar() {
   const { lang, t } = useLanguage();
 
   const categories = [
-    { name_hi: 'इंदौर', name_en: 'Indore', path: '/category/इंदौर' },
-    { name_hi: 'मध्यप्रदेश', name_en: 'Madhya Pradesh', path: '/category/मध्यप्रदेश' },
-    { name_hi: 'देश', name_en: 'India', path: '/category/देश' },
-    { name_hi: 'विदेश', name_en: 'World', path: '/category/विदेश' },
-    { name_hi: 'सिंहस्थ', name_en: 'Simhastha', path: '/category/सिंहस्थ' },
-    { name_hi: 'टेक्नोलॉजी', name_en: 'Technology', path: '/category/टेक्नोलॉजी' },
-    { name_hi: 'Jobs & Education', name_en: 'Jobs & Education', path: '/category/Jobs & Education' },
+    { name_hi: 'इंदौर', name_en: 'Indore', path: '/indore' },
+    { name_hi: 'मध्यप्रदेश', name_en: 'Madhya Pradesh', path: '/madhya-pradesh' },
+    { name_hi: 'देश', name_en: 'India', path: '/india' },
+    { name_hi: 'विदेश', name_en: 'World', path: '/world' },
+    { name_hi: 'सिंहस्थ', name_en: 'Simhastha', path: '/simhastha' },
+    { name_hi: 'टेक्नोलॉजी', name_en: 'Technology', path: '/technology' },
+    { name_hi: 'Jobs & Education', name_en: 'Jobs & Education', path: '/jobs-education' },
   ];
 
   return (

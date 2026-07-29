@@ -81,7 +81,7 @@ export default function TrendingSidebar({ trendingNews = [], mostReadNews = [], 
                 {/* Content */}
                 <div className="min-w-0">
                   <Link
-                    to={`/news/${item.id}`}
+                    to={`/article/${item.id}`}
                     className="font-display font-bold text-xs md:text-sm text-zinc-800 dark:text-zinc-100 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug"
                   >
                     {title}

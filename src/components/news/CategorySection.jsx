@@ -22,6 +22,19 @@ export default function CategorySection({ categoryName, articles = [] }) {
 
   const displayName = categoryTranslations[categoryName]?.[lang] || categoryName;
 
+  const getCategorySlug = (catName) => {
+    switch (catName) {
+      case 'इंदौर': return '/indore';
+      case 'मध्यप्रदेश': return '/madhya-pradesh';
+      case 'देश': return '/india';
+      case 'विदेश': return '/world';
+      case 'सिंहस्थ': return '/simhastha';
+      case 'टेक्नोलॉजी': return '/technology';
+      case 'Jobs & Education': return '/jobs-education';
+      default: return `/category/${catName}`;
+    }
+  };
+
   // Split into 1 featured and up to 4 smaller ones
   const featured = articles.find(a => a.featured) || articles[0];
   const items = articles.filter(a => a.id !== featured.id).slice(0, 4);
@@ -42,7 +55,7 @@ export default function CategorySection({ categoryName, articles = [] }) {
           </h2>
         </div>
         <Link
-          to={`/category/${categoryName}`}
+          to={getCategorySlug(categoryName)}
           className="inline-flex items-center gap-1 text-xs font-bold text-brand-red hover:text-brand-red-hover transition-colors uppercase tracking-wider group"
         >
           <span>{t('viewAll')}</span>
@@ -76,7 +89,7 @@ export default function CategorySection({ categoryName, articles = [] }) {
                 <span>{featPublishDate}</span>
               </div>
               <h3 className="font-display font-bold text-lg md:text-xl text-zinc-900 dark:text-zinc-50 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug mb-3">
-                <Link to={`/news/${featured.id}`}>
+                <Link to={`/article/${featured.id}`}>
                   {featTitle}
                 </Link>
               </h3>
@@ -84,7 +97,7 @@ export default function CategorySection({ categoryName, articles = [] }) {
                 {featSummary}
               </p>
               <Link
-                to={`/news/${featured.id}`}
+                to={`/article/${featured.id}`}
                 className="inline-flex items-center gap-1 text-xs font-bold text-brand-red hover:text-brand-red-hover transition-colors uppercase tracking-wider mt-auto group-hover:translate-x-1 duration-200"
               >
                 <span>{t('readMore')}</span>
@@ -126,12 +139,12 @@ export default function CategorySection({ categoryName, articles = [] }) {
                       {cardPublishDate}
                     </span>
                     <h4 className="font-display font-bold text-xs md:text-sm text-zinc-800 dark:text-zinc-100 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug mb-3">
-                      <Link to={`/news/${item.id}`}>
+                      <Link to={`/article/${item.id}`}>
                         {cardTitle}
                       </Link>
                     </h4>
                     <Link
-                      to={`/news/${item.id}`}
+                      to={`/article/${item.id}`}
                       className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-red hover:text-brand-red-hover transition-colors uppercase tracking-wider mt-auto group-hover:translate-x-0.5 duration-200"
                     >
                       <span>{t('read')}</span>

@@ -4,7 +4,7 @@ const LanguageContext = createContext();
 
 const translations = {
   hi: {
-    websiteName: "डेली न्यूज़",
+    websiteName: "इंदौर लेटेस्ट",
     home: "गृह",
     trending: "ट्रेंडिंग",
     mostRead: "लोकप्रिय",
@@ -28,10 +28,10 @@ const translations = {
     searchDesc: "आप मुख्य समाचार, शहर, तकनीक आदि खोज सकते हैं।",
     adPlaceholder: "विज्ञापन",
     adTitle: "यहाँ विज्ञापन लगाएं",
-    adDesc: "अपने व्यवसाय को डेली न्यूज़ के माध्यम से हजारों पाठकों तक पहुंचाएं।",
+    adDesc: "अपने व्यवसाय को इंदौर लेटेस्ट के माध्यम से हजारों पाठकों तक पहुंचाएं।",
     contactUs: "हमसे संपर्क करें",
-    aboutText: "डेली न्यूज़ मध्य प्रदेश और देश का एक विश्वसनीय हिंदी समाचार पोर्टल है। हम निष्पक्षता और सत्यता के सिद्धांतों पर चलकर पल-पल की ख़बरें आप तक पहुंचाते हैं।",
-    copyright: "Daily News. सर्वाधिकार सुरक्षित।",
+    aboutText: "इंदौर लेटेस्ट मध्य प्रदेश और देश का एक विश्वसनीय हिंदी समाचार पोर्टल है। हम निष्पक्षता और सत्यता के सिद्धांतों पर चलकर पल-पल की ख़बरें आप तक पहुंचाते हैं।",
+    copyright: "Indore Latest. सर्वाधिकार सुरक्षित।",
     address: "101, मीडिया हाइट्स, एबी रोड, इंदौर (म.प्र.) - 452001",
     terms: "नियम और शर्तें",
     privacy: "निजता नीति",
@@ -53,7 +53,7 @@ const translations = {
     language: "भाषा",
   },
   en: {
-    websiteName: "Daily News",
+    websiteName: "Indore Latest",
     home: "Home",
     trending: "Trending",
     mostRead: "Most Read",
@@ -79,8 +79,8 @@ const translations = {
     adTitle: "Advertise Here",
     adDesc: "Reach thousands of daily readers with your business banner.",
     contactUs: "Contact Us",
-    aboutText: "Daily News is a trusted regional and national news portal. Committed to truth and journalistic integrity, we bring you latest updates.",
-    copyright: "Daily News. All rights reserved.",
+    aboutText: "Indore Latest is a trusted regional and national news portal. Committed to truth and journalistic integrity, we bring you latest updates.",
+    copyright: "Indore Latest. All rights reserved.",
     address: "101, Media Heights, AB Road, Indore (M.P.) - 452001",
     terms: "Terms & Conditions",
     privacy: "Privacy Policy",

@@ -41,7 +41,7 @@ export default function RelatedNews({ relatedArticles = [] }) {
                   {publishDate}
                 </span>
                 <h4 className="font-display font-bold text-sm text-zinc-800 dark:text-zinc-100 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug">
-                  <RouterLink to={`/news/${article.id}`}>
+                  <RouterLink to={`/article/${article.id}`}>
                     {title}
                   </RouterLink>
                 </h4>

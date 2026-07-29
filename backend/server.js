@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'development') {
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    message: 'Daily News API is running 🚀',
+    message: 'Indore Latest API is running 🚀',
     timestamp: new Date().toISOString(),
   });
 });

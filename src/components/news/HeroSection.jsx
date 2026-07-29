@@ -52,7 +52,7 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
 
                 {/* Big Headline */}
                 <h2 className="font-display font-black text-xl md:text-3xl lg:text-4xl leading-tight text-white mb-3 group-hover:text-zinc-100 transition-colors">
-                  <Link to={`/news/${mainArticle.id}`} className="focus:outline-none hover:underline">
+                  <Link to={`/article/${mainArticle.id}`} className="focus:outline-none hover:underline">
                     {mainTitle}
                   </Link>
                 </h2>
@@ -65,7 +65,7 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
                 {/* Button */}
                 <div className="mt-2">
                   <Link
-                    to={`/news/${mainArticle.id}`}
+                    to={`/article/${mainArticle.id}`}
                     className="inline-flex items-center gap-2 bg-brand-red text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-brand-red-hover active:scale-95 transition-all shadow-md cursor-pointer"
                   >
                     <span>{t('readMore')}</span>
@@ -121,7 +121,7 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
                       </span>
                     </div>
                     <h4 className="font-display font-bold text-sm text-zinc-800 dark:text-zinc-100 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug">
-                      <Link to={`/news/${article.id}`}>
+                      <Link to={`/article/${article.id}`}>
                         {sideTitle}
                       </Link>
                     </h4>

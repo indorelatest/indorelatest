@@ -7,8 +7,9 @@ import { useLanguage } from '../../context/LanguageContext';
 import { SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Category() {
-  const { categoryName } = useParams();
+export default function Category({ categoryName: propCategoryName }) {
+  const { categoryName: urlCategoryName } = useParams();
+  const categoryName = propCategoryName || urlCategoryName;
   const { getNewsByCategory, loading } = useNews();
   const { lang, t } = useLanguage();
   
