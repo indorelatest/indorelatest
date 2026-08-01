@@ -61,20 +61,17 @@ const uploadImage = async (req, res, next) => {
 
 /**
  * @desc    Stream / proxy image from Cloudflare R2 by object key
- *          Lets the admin dashboard preview uploaded images without needing
- *          the public CDN domain (images.indorelatest.com) to be live.
- * @route   GET /api/upload/image/*  (matches any key depth)
+ *          This lets the admin dashboard preview uploaded images directly
+ *          without needing the public domain (images.indorelatest.com) to be live.
+ * @route   GET /api/upload/image/:folder/:filename  (or  /api/upload/image/:filename)
  * @access  Public (admin UI preview)
  */
 const proxyImage = async (req, res, next) => {
   try {
-    // req.params[0] captures everything after /image/ for wildcard routes
-    const rawKey = req.params[0] || '';
-    const cleanKey = decodeURIComponent(rawKey).replace(/^\/+/, '');
-
-    if (!cleanKey) {
-      return res.status(400).json({ success: false, message: 'Image key is required' });
-    }
+    // Reconstruct the full key from URL params
+    const { folder, filename } = req.params;
+    const key = folder ? `${folder}/${filename}` : filename;
+    const cleanKey = decodeURIComponent(key);
 
     // Try to stream from R2 first
     const streamedFromR2 = await streamFromR2(cleanKey, res);
@@ -88,14 +85,13 @@ const proxyImage = async (req, res, next) => {
 
     res.status(404).json({ success: false, message: 'Image not found' });
   } catch (error) {
-    // If R2 says NoSuchKey, return 404 cleanly
+    // If R2 says 'NoSuchKey', return 404 cleanly
     if (error.name === 'NoSuchKey' || error.$metadata?.httpStatusCode === 404) {
       return res.status(404).json({ success: false, message: 'Image not found' });
     }
     next(error);
   }
 };
-
 
 /**
  * @desc    Delete image from Cloudflare R2 / local storage
