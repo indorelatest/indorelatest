@@ -8,13 +8,13 @@ const {
   replaceImage,
 } = require('../controllers/uploadController');
 
-// Upload single image
+// Upload single image to Cloudflare R2
 router.post('/', upload.single('image'), uploadImage);
 
-// Stream / proxy image from R2 by key (for admin dashboard preview)
-// Handles keys like: news/indore-metro-123.webp  → /api/upload/image/news/indore-metro-123.webp
-router.get('/image/:folder/:filename', proxyImage);
-router.get('/image/:filename', proxyImage);
+// ─── Proxy / stream image from R2 by key for admin preview ───────────────────
+// Route matches any key depth: news/filename.webp  OR  gallery/sub/img.webp
+// The wildcard captures the full path after /image/
+router.get('/image/*', proxyImage);
 
 // Delete image from R2
 router.delete('/', deleteImage);
