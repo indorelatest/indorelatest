@@ -1,46 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import AdminDashboard from './AdminDashboard';
-import AdminArticles from './AdminArticles';
-import AdminArticleForm from './AdminArticleForm';
-import AdminMessages from './AdminMessages';
-import AdminSubscribers from './AdminSubscribers';
-import { verifyAdminPasscode } from '../../services/newsService';
-import { LayoutDashboard, FileText, Mail, Users, Key, LogOut } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import AdminDashboard from "./AdminDashboard";
+import AdminArticles from "./AdminArticles";
+import AdminArticleForm from "./AdminArticleForm";
+import AdminMessages from "./AdminMessages";
+import AdminSubscribers from "./AdminSubscribers";
+import { verifyAdminPasscode } from "../../services/newsService";
+import {
+  LayoutDashboard,
+  FileText,
+  Mail,
+  Users,
+  Key,
+  LogOut,
+} from "lucide-react";
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [passcode, setPasscode] = useState('');
-  const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [passcode, setPasscode] = useState("");
+  const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [editingArticle, setEditingArticle] = useState(null);
 
   useEffect(() => {
-    const isAuth = sessionStorage.getItem('admin_authenticated');
-    if (isAuth === 'true') {
+    const isAuth = sessionStorage.getItem("admin_authenticated");
+    if (isAuth === "true") {
       setIsAuthenticated(true);
     }
   }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     try {
       const response = await verifyAdminPasscode(passcode);
       if (response.success) {
-        sessionStorage.setItem('admin_authenticated', 'true');
+        sessionStorage.setItem("admin_authenticated", "true");
         setIsAuthenticated(true);
       } else {
-        setError('Invalid passcode. Please try again.');
+        setError("Invalid passcode. Please try again.");
       }
     } catch (err) {
-      setError(err.message || 'Invalid passcode. Please try again.');
+      const message = err.message || "Invalid passcode. Please try again.";
+      setError(
+        message.includes("504") ||
+          message.includes("502") ||
+          message.includes("NetworkError")
+          ? "Server unavailable. Please try again later."
+          : message,
+      );
     }
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem('admin_authenticated');
+    sessionStorage.removeItem("admin_authenticated");
     setIsAuthenticated(false);
-    setPasscode('');
+    setPasscode("");
   };
 
   // If not authenticated, show the PIN/passcode gate
@@ -52,7 +66,9 @@ export default function Admin() {
             <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center mx-auto">
               <Key className="w-6 h-6" />
             </div>
-            <h1 className="text-2xl font-black text-zinc-900 dark:text-white">Admin Access Gate</h1>
+            <h1 className="text-2xl font-black text-zinc-900 dark:text-white">
+              Admin Access Gate
+            </h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
               Enter the administration passcode to manage Indore Latest.
             </p>
@@ -87,10 +103,10 @@ export default function Admin() {
   }
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'articles', label: 'Articles', icon: FileText },
-    { id: 'messages', label: 'Messages', icon: Mail },
-    { id: 'subscribers', label: 'Subscribers', icon: Users },
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "articles", label: "Articles", icon: FileText },
+    { id: "messages", label: "Messages", icon: Mail },
+    { id: "subscribers", label: "Subscribers", icon: Users },
   ];
 
   return (
@@ -127,8 +143,8 @@ export default function Admin() {
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer ${
                   activeTab === item.id && !editingArticle
-                    ? 'bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400'
-                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white'
+                    ? "bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white"
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -138,7 +154,7 @@ export default function Admin() {
           })}
         </nav>
 
-        {activeTab === 'articles' && !editingArticle && (
+        {activeTab === "articles" && !editingArticle && (
           <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
             <button
               onClick={() => setEditingArticle({})}
@@ -157,20 +173,18 @@ export default function Admin() {
             article={editingArticle.id ? editingArticle : null}
             onSave={(saved) => {
               setEditingArticle(null);
-              setActiveTab('articles');
+              setActiveTab("articles");
             }}
             onCancel={() => setEditingArticle(null)}
           />
         ) : (
           <>
-            {activeTab === 'dashboard' && <AdminDashboard />}
-            {activeTab === 'articles' && (
-              <AdminArticles
-                onEdit={(article) => setEditingArticle(article)}
-              />
+            {activeTab === "dashboard" && <AdminDashboard />}
+            {activeTab === "articles" && (
+              <AdminArticles onEdit={(article) => setEditingArticle(article)} />
             )}
-            {activeTab === 'messages' && <AdminMessages />}
-            {activeTab === 'subscribers' && <AdminSubscribers />}
+            {activeTab === "messages" && <AdminMessages />}
+            {activeTab === "subscribers" && <AdminSubscribers />}
           </>
         )}
       </main>
