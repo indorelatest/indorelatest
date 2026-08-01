@@ -3,15 +3,18 @@ import { Link } from 'react-router-dom';
 import { Calendar, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
+import ResponsiveImage from '../common/ResponsiveImage';
 
 export default function NewsCard({ item }) {
   const { lang, t } = useLanguage();
-  const { id, image } = item;
+  const { id, imageUrl, image, alt, width, height } = item;
 
   const title = item[`title_${lang}`] || item.title_hi;
   const summary = item[`summary_${lang}`] || item.summary_hi;
   const category = item[`category_${lang}`] || item.category_hi;
   const publishDate = item[`publishDate_${lang}`] || item.publishDate_hi;
+
+  const imageSrc = imageUrl || image;
 
   return (
     <motion.article
@@ -21,16 +24,19 @@ export default function NewsCard({ item }) {
       transition={{ duration: 0.4 }}
       className="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 ease-out"
     >
-      {/* Card Image with Hover Zoom */}
+      {/* Card Image with Responsive Image optimization */}
       <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-800 shrink-0">
-        <img
-          src={image}
-          alt={title}
+        <ResponsiveImage
+          src={imageSrc}
+          alt={alt || title}
+          width={width || 600}
+          height={height || 375}
           loading="lazy"
+          fetchPriority="low"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
         />
         {/* Category Badge overlay */}
-        <span className="absolute top-3 left-3 bg-brand-red text-white text-[10px] md:text-xs font-bold px-2.5 py-1 rounded shadow-md tracking-wider">
+        <span className="absolute top-3 left-3 bg-brand-red text-white text-[10px] md:text-xs font-bold px-2.5 py-1 rounded shadow-md tracking-wider pointer-events-none">
           {category}
         </span>
       </div>

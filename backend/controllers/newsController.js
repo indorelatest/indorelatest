@@ -1,4 +1,5 @@
 const News = require('../models/News');
+const { deleteFromR2 } = require('../utils/r2Storage');
 
 // ─── GET all news (with optional filters) ───────────────────────────────────
 const getAllNews = async (req, res) => {
@@ -161,7 +162,11 @@ const incrementView = async (req, res) => {
 // ─── POST create article (admin) ─────────────────────────────────────────────
 const createNews = async (req, res) => {
   try {
-    const news = new News(req.body);
+    const body = { ...req.body };
+    if (body.imageUrl && !body.image) {
+      body.image = body.imageUrl;
+    }
+    const news = new News(body);
     const saved = await news.save();
     res.status(201).json({ success: true, data: saved });
   } catch (error) {
@@ -172,9 +177,13 @@ const createNews = async (req, res) => {
 // ─── PUT update article (admin) ──────────────────────────────────────────────
 const updateNews = async (req, res) => {
   try {
+    const body = { ...req.body };
+    if (body.imageUrl && !body.image) {
+      body.image = body.imageUrl;
+    }
     const news = await News.findOneAndUpdate(
       { id: req.params.id },
-      req.body,
+      body,
       { new: true, runValidators: true }
     );
     if (!news) return res.status(404).json({ success: false, message: 'News not found' });
@@ -189,6 +198,16 @@ const deleteNews = async (req, res) => {
   try {
     const news = await News.findOneAndDelete({ id: req.params.id });
     if (!news) return res.status(404).json({ success: false, message: 'News not found' });
+
+    // Clean up associated Cloudflare R2 image if imageKey exists
+    if (news.imageKey) {
+      try {
+        await deleteFromR2(news.imageKey);
+      } catch (err) {
+        console.warn(`Failed to clean up R2 image ${news.imageKey}:`, err.message);
+      }
+    }
+
     res.json({ success: true, message: 'Article deleted successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

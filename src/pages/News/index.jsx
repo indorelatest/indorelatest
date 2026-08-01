@@ -5,6 +5,8 @@ import RelatedNews from '../../components/news/RelatedNews';
 import ShareButtons from '../../components/news/ShareButtons';
 import ReadingProgressBar from '../../components/news/ReadingProgressBar';
 import TrendingSidebar from '../../components/news/TrendingSidebar';
+import SEO from '../../components/common/SEO';
+import ResponsiveImage from '../../components/common/ResponsiveImage';
 import { useLanguage } from '../../context/LanguageContext';
 import { ArrowLeft, User, Calendar, Tag, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -53,6 +55,7 @@ export default function News() {
   if (!article) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center font-sans">
+        <SEO title="News Not Found" description="The requested article could not be found." />
         <h2 className="text-2xl font-bold mb-4">{lang === 'en' ? 'News Not Found!' : 'ख़बर नहीं मिली!'}</h2>
         <p className="text-zinc-500 mb-6">
           {lang === 'en'
@@ -71,19 +74,20 @@ export default function News() {
   }
 
   const title = article[`title_${lang}`] || article.title_hi;
+  const summary = article[`summary_${lang}`] || article.summary_hi;
   const content = article[`content_${lang}`] || article.content_hi;
   const category = article[`category_${lang}`] || article.category_hi;
   const author = article[`author_${lang}`] || article.author_hi;
   const publishDate = article[`publishDate_${lang}`] || article.publishDate_hi;
+  const heroImageSrc = article.imageUrl || article.image;
 
   const related = getRelatedNews(article.id, canonicalCategory(article.category_hi), 3);
   const trending = getTrendingNews(5);
   const mostRead = getMostReadNews(5);
   const latest = getLatestNews(5);
 
-  // Helper to get canonical category matching
   function canonicalCategory(catHi) {
-    return catHi; // getRelatedNews handles matching category_hi
+    return catHi;
   }
 
   // Split paragraphs
@@ -91,7 +95,18 @@ export default function News() {
 
   return (
     <div className="w-full pb-16 relative">
-      
+      {/* Dynamic News SEO & Schema.org NewsArticle Metadata */}
+      <SEO
+        title={title}
+        description={summary || title}
+        canonicalUrl={`https://indorelatest.com/article/${article.id}`}
+        imageUrl={heroImageSrc}
+        publishedAt={article.publishedAt || article.createdAt}
+        updatedAt={article.updatedAt}
+        author={author}
+        category={category}
+      />
+
       {/* Reading Progress Bar */}
       <ReadingProgressBar />
 
@@ -148,11 +163,16 @@ export default function News() {
               </div>
             </div>
 
-            {/* Large Image */}
+            {/* Large Hero Image (Eager Loading & High Fetch Priority) */}
             <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 shadow-md mb-6">
-              <img
-                src={article.image}
-                alt={title}
+              <ResponsiveImage
+                src={heroImageSrc}
+                alt={article.alt || title}
+                width={article.width || 1200}
+                height={article.height || 675}
+                loading="eager"
+                fetchPriority="high"
+                caption={article.caption}
                 className="w-full h-full object-cover"
               />
             </div>

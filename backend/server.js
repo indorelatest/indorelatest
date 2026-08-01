@@ -1,14 +1,17 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
+const seoCrawlerMiddleware = require('./middleware/seoCrawlerMiddleware');
 
 // Route imports
 const newsRoutes = require('./routes/newsRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const subscriberRoutes = require('./routes/subscriberRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 // Connect to MongoDB
 connectDB();
@@ -17,7 +20,7 @@ const app = express();
 
 // ─── Middleware ──────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://indorelatest.com'],
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -25,6 +28,12 @@ app.use(express.urlencoded({ extended: true }));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// Serve local static upload directory (fallback for images when Cloudflare R2 credentials are not set)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Intercept crawler requests for articles & serve SSR meta tags
+app.use(seoCrawlerMiddleware);
 
 // ─── Health Check ────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
@@ -37,6 +46,7 @@ app.get('/api/health', (req, res) => {
 
 // ─── API Routes ──────────────────────────────────────────────────────────────
 app.use('/api/news', newsRoutes);
+app.use('/api/upload', uploadRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/subscribe', subscriberRoutes);
 

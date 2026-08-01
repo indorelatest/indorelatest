@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createNews, updateNews } from '../../services/newsService';
-import { X, Save, Image, FileText } from 'lucide-react';
+import { X, Save, Image as ImageIcon, FileText, Upload, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 const CATEGORIES = [
   { hi: 'इंदौर', en: 'Indore' },
@@ -15,6 +15,7 @@ const CATEGORIES = [
 const EMPTY = {
   id: '', title_hi: '', title_en: '', summary_hi: '', summary_en: '',
   content_hi: '', content_en: '', category_hi: 'इंदौर', category_en: 'Indore',
+  imageUrl: '', imageKey: '', alt: '', caption: '', width: 0, height: 0, mimeType: 'image/webp', filename: '',
   image: '', author_hi: '', author_en: '', publishDate_hi: '', publishDate_en: '',
   featured: false, trending: false, breaking: false, views: 0,
 };
@@ -23,12 +24,19 @@ export default function AdminArticleForm({ article, onSave, onCancel }) {
   const isEdit = !!article;
   const [form, setForm] = useState(isEdit ? { ...article } : { ...EMPTY });
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [previewUrl, setPreviewUrl] = useState(isEdit ? (article?.imageUrl || article?.image || '') : '');
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('basic');
 
   useEffect(() => {
     setForm(isEdit ? { ...article } : { ...EMPTY });
     setError('');
+    setUploadError('');
+    setUploadSuccess(false);
+    setPreviewUrl(isEdit ? (article?.imageUrl || article?.image || '') : '');
   }, [article]);
 
   const set = (field, val) => setForm(prev => ({ ...prev, [field]: val }));
@@ -38,15 +46,71 @@ export default function AdminArticleForm({ article, onSave, onCancel }) {
     if (cat) { set('category_hi', cat.hi); set('category_en', cat.en); }
   };
 
+  // Direct Image Upload / Replacement for Article Editing
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError('');
+    setUploadSuccess(false);
+
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('folder', 'news');
+    if (form.title_en || form.id) {
+      formData.append('filename', form.title_en || form.id);
+    }
+    if (form.alt) formData.append('alt', form.alt);
+    if (form.caption) formData.append('caption', form.caption);
+    if (form.imageKey) formData.append('oldKey', form.imageKey);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || 'Image upload failed');
+
+      const data = result.data;
+      setForm(prev => ({
+        ...prev,
+        imageUrl: data.imageUrl,        // Real CDN URL — saved to MongoDB
+        imageKey: data.imageKey,
+        image: data.imageUrl,
+        alt: data.alt || prev.alt || prev.title_hi || '',
+        caption: data.caption || prev.caption || '',
+        width: data.width || 0,
+        height: data.height || 0,
+        mimeType: data.mimeType || 'image/webp',
+        filename: data.filename || '',
+      }));
+      // Use backend proxy URL for preview — works even if CDN domain isn't accessible yet
+      setPreviewUrl(data.previewUrl || data.imageUrl);
+      setUploadSuccess(true);
+    } catch (err) {
+      setUploadError(err.message);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     if (!form.id || !form.title_hi || !form.title_en) {
-      setError('ID, Hindi title, and English title are required.'); return;
+      setError('Article ID (slug), Hindi title, and English title are required.'); return;
     }
     setSaving(true);
     try {
-      const result = isEdit ? await updateNews(form.id, form) : await createNews(form);
+      const payload = {
+        ...form,
+        imageUrl: form.imageUrl || form.image,
+        image: form.imageUrl || form.image,
+      };
+      const result = isEdit ? await updateNews(form.id, payload) : await createNews(payload);
       onSave(result.data);
     } catch (err) {
       setError(err.message);
@@ -58,7 +122,7 @@ export default function AdminArticleForm({ article, onSave, onCancel }) {
   const tabs = [
     { id: 'basic', label: 'Basic Info', icon: FileText },
     { id: 'content', label: 'Content', icon: FileText },
-    { id: 'image', label: 'Image & Flags', icon: Image },
+    { id: 'image', label: 'Image & Cloudflare R2', icon: ImageIcon },
   ];
 
   return (
@@ -76,16 +140,17 @@ export default function AdminArticleForm({ article, onSave, onCancel }) {
       {/* Tabs */}
       <div className="flex border-b border-zinc-200 dark:border-zinc-700 px-4">
         {tabs.map(t => (
-          <button key={t.id} onClick={() => setActiveTab(t.id)}
-            className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${activeTab === t.id
+          <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
+            className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${activeTab === t.id
               ? 'border-red-500 text-red-600 dark:text-red-400'
               : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}>
+            <t.icon className="w-4 h-4" />
             {t.label}
           </button>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="p-6 space-y-4 font-sans">
         {error && <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm px-4 py-3 rounded-lg">{error}</div>}
 
         {activeTab === 'basic' && (
@@ -94,7 +159,7 @@ export default function AdminArticleForm({ article, onSave, onCancel }) {
               <div>
                 <label className={labelCls}>Article ID (slug) *</label>
                 <input value={form.id} onChange={e => set('id', e.target.value)} disabled={isEdit}
-                  placeholder="e.g. indore-6" className={`${inputCls} ${isEdit ? 'opacity-60 cursor-not-allowed' : ''}`} />
+                  placeholder="e.g. indore-metro-gandhi-nagar" className={`${inputCls} ${isEdit ? 'opacity-60 cursor-not-allowed' : ''}`} />
               </div>
               <div>
                 <label className={labelCls}>Category</label>
@@ -157,21 +222,146 @@ export default function AdminArticleForm({ article, onSave, onCancel }) {
 
         {activeTab === 'image' && (
           <div className="space-y-6">
+            
+            {/* Cloudflare R2 Drag & Drop / Upload Box */}
+            <div className="border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-6 text-center hover:border-red-500 transition-colors bg-zinc-50 dark:bg-zinc-900/50">
+              <input
+                type="file"
+                id="file-upload"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                onChange={handleFileUpload}
+                className="hidden"
+                disabled={uploading}
+              />
+              <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center justify-center space-y-2">
+                {uploading ? (
+                  <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
+                ) : (
+                  <Upload className="w-10 h-10 text-red-600 dark:text-red-400 mb-1" />
+                )}
+                <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
+                  {uploading ? 'Uploading Image...' : isEdit ? 'Click to Replace Article Image (JPG, PNG, WebP)' : 'Click to Upload Image (JPG, PNG, WebP)'}
+                </div>
+                <p className="text-xs text-zinc-500">
+                  Image will be auto-converted to WebP & optimized
+                </p>
+              </label>
+            </div>
+
+            {uploadSuccess && (
+              <div className="flex items-center gap-2 text-xs text-green-700 bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>New image uploaded & attached to article! Click "Update Article" below to save changes.</span>
+              </div>
+            )}
+
+            {uploadError && (
+              <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{uploadError}</span>
+              </div>
+            )}
+
+            {/* Cloudflare R2 Image URL */}
             <div>
               <label className={labelCls}>Image URL</label>
-              <input value={form.image} onChange={e => set('image', e.target.value)}
-                placeholder="https://images.unsplash.com/..." className={inputCls} />
-              {form.image && (
-                <div className="mt-3 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 aspect-video">
-                  <img src={form.image} alt="Preview" className="w-full h-full object-cover"
-                    onError={e => { e.target.style.display = 'none'; }} />
-                </div>
-              )}
+              <input
+                value={form.imageUrl || form.image}
+                onChange={e => {
+                  set('imageUrl', e.target.value);
+                  set('image', e.target.value);
+                }}
+                placeholder="https://images.indorelatest.com/news/indore-metro.webp"
+                className={inputCls}
+              />
             </div>
+
+            {/* Image SEO Metadata Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className={labelCls}>Alt Text (SEO)</label>
+                <input
+                  value={form.alt}
+                  onChange={e => set('alt', e.target.value)}
+                  placeholder="e.g. इंदौर मेट्रो ट्रेन गांधी नगर स्टेशन"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Caption</label>
+                <input
+                  value={form.caption}
+                  onChange={e => set('caption', e.target.value)}
+                  placeholder="Image caption display under article"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Filename (R2 Key)</label>
+                <input
+                  value={form.filename || form.imageKey}
+                  onChange={e => set('filename', e.target.value)}
+                  placeholder="indore-metro-gandhi-nagar.webp"
+                  className={inputCls}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className={labelCls}>Width (px)</label>
+                  <input
+                    type="number"
+                    value={form.width || 0}
+                    onChange={e => set('width', parseInt(e.target.value) || 0)}
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Height (px)</label>
+                  <input
+                    type="number"
+                    value={form.height || 0}
+                    onChange={e => set('height', parseInt(e.target.value) || 0)}
+                    className={inputCls}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Live Preview — uses backend proxy URL so it works even without CDN domain */}
+            {previewUrl && (
+              <div className="space-y-2">
+                <span className={labelCls}>Image Preview</span>
+                <div className="relative rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 aspect-video max-h-64">
+                  <img
+                    src={previewUrl}
+                    alt={form.alt || 'Preview'}
+                    className="w-full h-full object-cover"
+                    onError={e => {
+                      // If proxy fails, try the direct CDN URL
+                      if (e.target.src !== form.imageUrl && form.imageUrl) {
+                        e.target.src = form.imageUrl;
+                      } else {
+                        e.target.style.display = 'none';
+                      }
+                    }}
+                  />
+                  {form.width > 0 && (
+                    <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded backdrop-blur">
+                      {form.width} x {form.height} px
+                    </span>
+                  )}
+                </div>
+                {form.caption && (
+                  <p className="text-xs text-zinc-500 italic text-center">{form.caption}</p>
+                )}
+              </div>
+            )}
+
             <div>
               <label className={labelCls}>Views</label>
               <input type="number" value={form.views} onChange={e => set('views', parseInt(e.target.value) || 0)} className={inputCls} />
             </div>
+
             <div className="grid grid-cols-3 gap-4">
               {[['featured', '⭐ Featured'], ['trending', '🔥 Trending'], ['breaking', '⚡ Breaking']].map(([field, label]) => (
                 <label key={field} className="flex items-center gap-3 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors">
@@ -185,7 +375,7 @@ export default function AdminArticleForm({ article, onSave, onCancel }) {
         )}
 
         <div className="flex gap-3 pt-2 border-t border-zinc-100 dark:border-zinc-700">
-          <button type="submit" disabled={saving}
+          <button type="submit" disabled={saving || uploading}
             className="flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-colors disabled:opacity-60">
             <Save className="w-4 h-4" />
             {saving ? 'Saving...' : isEdit ? 'Update Article' : 'Create Article'}
