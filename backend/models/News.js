@@ -16,11 +16,27 @@ const newsSchema = new mongoose.Schema(
     content_en: { type: String, required: true },
     category_hi: { type: String, required: true },
     category_en: { type: String, required: true },
+
+    // Extended Image Storage Metadata (Cloudflare R2)
+    imageUrl: { type: String, default: '' },
+    imageKey: { type: String, default: '' },
+    alt: { type: String, default: '' },
+    caption: { type: String, default: '' },
+    width: { type: Number, default: 0 },
+    height: { type: Number, default: 0 },
+    mimeType: { type: String, default: 'image/webp' },
+    filename: { type: String, default: '' },
+
+    // Fallback/Legacy image field
     image: { type: String, default: '' },
+
     author_hi: { type: String, default: 'डेस्क' },
     author_en: { type: String, default: 'Desk' },
     publishDate_hi: { type: String, default: '' },
     publishDate_en: { type: String, default: '' },
+
+    publishedAt: { type: Date, default: Date.now },
+
     featured: { type: Boolean, default: false },
     trending: { type: Boolean, default: false },
     breaking: { type: Boolean, default: false },
@@ -30,6 +46,16 @@ const newsSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Pre-save hook to ensure imageUrl and image are synchronized for backward compatibility
+newsSchema.pre('save', function (next) {
+  if (this.imageUrl && !this.image) {
+    this.image = this.imageUrl;
+  } else if (this.image && !this.imageUrl) {
+    this.imageUrl = this.image;
+  }
+  next();
+});
 
 // Text indexes for full-text search across both languages
 newsSchema.index({

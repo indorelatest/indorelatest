@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Calendar, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
+import ResponsiveImage from '../common/ResponsiveImage';
 
 export default function HeroSection({ featuredNews = [], sideNews = [] }) {
   const { lang, t } = useLanguage();
@@ -15,6 +16,7 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
   const mainSummary = mainArticle[`summary_${lang}`] || mainArticle.summary_hi;
   const mainCategory = mainArticle[`category_${lang}`] || mainArticle.category_hi;
   const mainPublishDate = mainArticle[`publishDate_${lang}`] || mainArticle.publishDate_hi;
+  const mainImageSrc = mainArticle.imageUrl || mainArticle.image;
 
   return (
     <section className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 font-sans">
@@ -28,17 +30,21 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
           className="lg:col-span-8 flex flex-col"
         >
           <div className="group relative flex flex-col h-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
-            {/* Featured Image */}
+            {/* Featured Image with Eager Loading & High Fetch Priority for Core Web Vitals (LCP) */}
             <div className="relative aspect-[16/9] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-              <img
-                src={mainArticle.image}
-                alt={mainTitle}
+              <ResponsiveImage
+                src={mainImageSrc}
+                alt={mainArticle.alt || mainTitle}
+                width={mainArticle.width || 1200}
+                height={mainArticle.height || 675}
+                loading="eager"
+                fetchPriority="high"
                 className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 group-hover:opacity-95 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 group-hover:opacity-95 transition-opacity pointer-events-none" />
               
               {/* Floating Badge */}
-              <span className="absolute top-4 left-4 bg-brand-red text-white text-xs font-bold px-3 py-1 rounded shadow-md tracking-wider">
+              <span className="absolute top-4 left-4 bg-brand-red text-white text-xs font-bold px-3 py-1 rounded shadow-md tracking-wider pointer-events-none">
                 {mainCategory}
               </span>
 
@@ -95,6 +101,7 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
               const sideTitle = article[`title_${lang}`] || article.title_hi;
               const sideCategory = article[`category_${lang}`] || article.category_hi;
               const sidePublishDate = article[`publishDate_${lang}`] || article.publishDate_hi;
+              const sideImg = article.imageUrl || article.image;
 
               return (
                 <div
@@ -103,9 +110,13 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
                 >
                   {/* Small Image */}
                   <div className="relative w-24 md:w-28 h-20 md:h-22 rounded-lg overflow-hidden shrink-0 bg-zinc-150 dark:bg-zinc-800">
-                    <img
-                      src={article.image}
-                      alt={sideTitle}
+                    <ResponsiveImage
+                      src={sideImg}
+                      alt={article.alt || sideTitle}
+                      width={article.width || 300}
+                      height={article.height || 200}
+                      loading="lazy"
+                      fetchPriority="low"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
