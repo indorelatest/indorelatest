@@ -27,7 +27,7 @@ export default function Home() {
     'विदेश',
     'सिंहस्थ',
     'टेक्नोलॉजी',
-    'Jobs & Education',
+    'नौकरी और शिक्षा',
   ];
 
   if (loading) {

@@ -26,7 +26,7 @@ export default function News() {
       case 'विदेश': return '/world';
       case 'सिंहस्थ': return '/simhastha';
       case 'टेक्नोलॉजी': return '/technology';
-      case 'Jobs & Education': return '/jobs-education';
+      case 'नौकरी और शिक्षा': return '/jobs-education';
       default: return `/category/${catName}`;
     }
   };

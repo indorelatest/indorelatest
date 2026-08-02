@@ -20,7 +20,7 @@ export default function Header({ onSearchClick }) {
     { name_hi: 'विदेश', name_en: 'World', path: '/world' },
     { name_hi: 'सिंहस्थ', name_en: 'Simhastha', path: '/simhastha' },
     { name_hi: 'टेक्नोलॉजी', name_en: 'Technology', path: '/technology' },
-    { name_hi: 'Jobs & Education', name_en: 'Jobs & Education', path: '/jobs-education' },
+    { name_hi: 'नौकरी और शिक्षा', name_en: 'Jobs & Education', path: '/jobs-education' },
   ];
 
   useEffect(() => {
@@ -129,6 +129,7 @@ export default function Header({ onSearchClick }) {
               )}
             </AnimatePresence>
           </div>
+
 
           <button
             onClick={onSearchClick}
