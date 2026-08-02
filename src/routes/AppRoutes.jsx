@@ -39,6 +39,7 @@ export default function AppRoutes() {
         <Route path="/technology" element={<Category categoryName="टेक्नोलॉजी" />} />
         <Route path="/jobs-education" element={<Category categoryName="नौकरी और शिक्षा" />} />
         <Route path="/article/:id" element={<News />} />
+        <Route path="/:categorySlug/:id" element={<News />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/privacy-policy" element={<Privacy />} />

@@ -4,6 +4,7 @@ import { Calendar, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
 import ResponsiveImage from '../common/ResponsiveImage';
+import { getCategorySlugName } from '../../utils/categoryHelper';
 
 export default function HeroSection({ featuredNews = [], sideNews = [] }) {
   const { lang, t } = useLanguage();
@@ -19,8 +20,8 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
   const mainImageSrc = mainArticle.imageUrl || mainArticle.image;
 
   return (
-    <section className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 font-sans">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <section className="max-w-7xl mx-auto px-4 md:px-6 pt-3 pb-4 md:py-8 font-sans">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
         
         {/* Left Column: Large Featured Story */}
         <motion.div
@@ -30,8 +31,9 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
           className="lg:col-span-8 flex flex-col"
         >
           <div className="group relative flex flex-col h-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
-            {/* Featured Image with Eager Loading & High Fetch Priority for Core Web Vitals (LCP) */}
-            <div className="relative aspect-[16/9] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+            
+            {/* DESKTOP HERO CARD (Original layout, visible on md and above) */}
+            <div className="hidden md:block relative md:h-full w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
               <ResponsiveImage
                 src={mainImageSrc}
                 alt={mainArticle.alt || mainTitle}
@@ -41,7 +43,7 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
                 fetchPriority="high"
                 className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 group-hover:opacity-95 transition-opacity pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-90 group-hover:opacity-95 transition-opacity pointer-events-none" />
               
               {/* Floating Badge */}
               <span className="absolute top-4 left-4 bg-brand-red text-white text-xs font-bold px-3 py-1 rounded shadow-md tracking-wider pointer-events-none">
@@ -49,7 +51,7 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
               </span>
 
               {/* Text Content Overlay on Image */}
-              <div className="absolute bottom-0 inset-x-0 p-5 md:p-8 flex flex-col justify-end text-white">
+              <div className="absolute bottom-0 inset-x-0 p-5 md:pt-8 md:px-8 md:pb-5 flex flex-col justify-end text-white">
                 {/* Date */}
                 <div className="flex items-center gap-1.5 text-xs text-zinc-300 mb-3">
                   <Calendar className="w-4 h-4 text-zinc-400" />
@@ -58,7 +60,7 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
 
                 {/* Big Headline */}
                 <h2 className="font-display font-black text-xl md:text-3xl lg:text-4xl leading-tight text-white mb-3 group-hover:text-zinc-100 transition-colors">
-                  <Link to={`/article/${mainArticle.id}`} className="focus:outline-none hover:underline">
+                  <Link to={`/${getCategorySlugName(mainArticle.category_hi)}/${mainArticle.id}`} className="focus:outline-none hover:underline">
                     {mainTitle}
                   </Link>
                 </h2>
@@ -71,7 +73,7 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
                 {/* Button */}
                 <div className="mt-2">
                   <Link
-                    to={`/article/${mainArticle.id}`}
+                    to={`/${getCategorySlugName(mainArticle.category_hi)}/${mainArticle.id}`}
                     className="inline-flex items-center gap-2 bg-brand-red text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-brand-red-hover active:scale-95 transition-all shadow-md cursor-pointer"
                   >
                     <span>{t('readMore')}</span>
@@ -80,6 +82,59 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
                 </div>
               </div>
             </div>
+
+            {/* MOBILE HERO CARD (Compact layout, visible only on mobile) */}
+            <div className="md:hidden flex flex-col h-full">
+              {/* Featured Image */}
+              <div className="relative aspect-[16/8] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800 shrink-0">
+                <ResponsiveImage
+                  src={mainImageSrc}
+                  alt={mainArticle.alt || mainTitle}
+                  width={mainArticle.width || 1200}
+                  height={mainArticle.height || 675}
+                  loading="eager"
+                  fetchPriority="high"
+                  className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                />
+                {/* Floating Badge */}
+                <span className="absolute top-4 left-4 bg-brand-red text-white text-xs font-bold px-3 py-1 rounded shadow-md tracking-wider pointer-events-none z-10">
+                  {mainCategory}
+                </span>
+              </div>
+
+              {/* Text Content */}
+              <div className="pt-3 px-4 pb-4 flex flex-col justify-end text-zinc-900 dark:text-zinc-100">
+                {/* Date */}
+                <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 mb-1.5">
+                  <Calendar className="w-4 h-4 text-zinc-400" />
+                  <span>{mainPublishDate}</span>
+                </div>
+
+                {/* Big Headline */}
+                <h2 className="font-display font-extrabold text-lg leading-tight text-zinc-900 dark:text-zinc-50 mb-2 group-hover:text-brand-red transition-colors">
+                  <Link to={`/${getCategorySlugName(mainArticle.category_hi)}/${mainArticle.id}`} className="focus:outline-none hover:underline">
+                    {mainTitle}
+                  </Link>
+                </h2>
+
+                {/* Summary */}
+                <p className="text-xs text-zinc-650 dark:text-zinc-350 line-clamp-2 leading-relaxed mb-3">
+                  {mainSummary}
+                </p>
+
+                {/* Button */}
+                <div className="mt-1">
+                  <Link
+                    to={`/${getCategorySlugName(mainArticle.category_hi)}/${mainArticle.id}`}
+                    className="inline-flex items-center gap-2 bg-brand-red text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-brand-red-hover active:scale-95 transition-all shadow-md cursor-pointer"
+                  >
+                    <span>{t('readMore')}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+
           </div>
         </motion.div>
 
@@ -106,15 +161,15 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
               return (
                 <div
                   key={article.id}
-                  className="group flex gap-4 p-3 bg-white dark:bg-zinc-900 border border-zinc-250/70 dark:border-zinc-800 rounded-xl hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300"
+                  className="group flex items-center gap-4 p-4 md:p-3 bg-white dark:bg-zinc-900 border border-zinc-250/70 dark:border-zinc-800 rounded-xl hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300"
                 >
-                  {/* Small Image */}
-                  <div className="relative w-24 md:w-28 h-20 md:h-22 rounded-lg overflow-hidden shrink-0 bg-zinc-150 dark:bg-zinc-800">
+                  {/* Small Image - Increased height on mobile */}
+                  <div className="relative w-24 h-24 md:w-28 md:h-24 rounded-lg overflow-hidden shrink-0 bg-zinc-150 dark:bg-zinc-800">
                     <ResponsiveImage
                       src={sideImg}
                       alt={article.alt || sideTitle}
                       width={article.width || 300}
-                      height={article.height || 200}
+                      height={article.height || 240}
                       loading="lazy"
                       fetchPriority="low"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -131,8 +186,8 @@ export default function HeroSection({ featuredNews = [], sideNews = [] }) {
                         {sidePublishDate}
                       </span>
                     </div>
-                    <h4 className="font-display font-bold text-sm text-zinc-800 dark:text-zinc-100 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug">
-                      <Link to={`/article/${article.id}`}>
+                    <h4 className="font-display font-bold text-sm text-zinc-800 dark:text-zinc-100 group-hover:text-brand-red transition-colors line-clamp-none leading-snug">
+                      <Link to={`/${getCategorySlugName(article.category_hi)}/${article.id}`}>
                         {sideTitle}
                       </Link>
                     </h4>

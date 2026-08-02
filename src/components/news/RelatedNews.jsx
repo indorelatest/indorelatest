@@ -2,6 +2,7 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { getCategorySlugName } from '../../utils/categoryHelper';
 
 export default function RelatedNews({ relatedArticles = [] }) {
   const { lang, t } = useLanguage();
@@ -41,7 +42,7 @@ export default function RelatedNews({ relatedArticles = [] }) {
                   {publishDate}
                 </span>
                 <h4 className="font-display font-bold text-sm text-zinc-800 dark:text-zinc-100 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug">
-                  <RouterLink to={`/article/${article.id}`}>
+                  <RouterLink to={`/${getCategorySlugName(article.category_hi)}/${article.id}`}>
                     {title}
                   </RouterLink>
                 </h4>

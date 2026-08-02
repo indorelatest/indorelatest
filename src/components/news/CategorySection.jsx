@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronRight, Calendar, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
+import { getCategorySlugName } from '../../utils/categoryHelper';
 
 export default function CategorySection({ categoryName, articles = [] }) {
   const { lang, t } = useLanguage();
@@ -89,15 +90,15 @@ export default function CategorySection({ categoryName, articles = [] }) {
                 <span>{featPublishDate}</span>
               </div>
               <h3 className="font-display font-bold text-lg md:text-xl text-zinc-900 dark:text-zinc-50 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug mb-3">
-                <Link to={`/article/${featured.id}`}>
+                <Link to={`/${getCategorySlugName(featured.category_hi)}/${featured.id}`}>
                   {featTitle}
                 </Link>
               </h3>
-              <p className="text-xs md:text-sm text-zinc-550 dark:text-zinc-400 line-clamp-3 leading-relaxed mb-4">
+              <p className="text-xs md:text-sm text-zinc-555 dark:text-zinc-400 line-clamp-3 leading-relaxed mb-4">
                 {featSummary}
               </p>
               <Link
-                to={`/article/${featured.id}`}
+                to={`/${getCategorySlugName(featured.category_hi)}/${featured.id}`}
                 className="inline-flex items-center gap-1 text-xs font-bold text-brand-red hover:text-brand-red-hover transition-colors uppercase tracking-wider mt-auto group-hover:translate-x-1 duration-200"
               >
                 <span>{t('readMore')}</span>
@@ -139,12 +140,12 @@ export default function CategorySection({ categoryName, articles = [] }) {
                       {cardPublishDate}
                     </span>
                     <h4 className="font-display font-bold text-xs md:text-sm text-zinc-800 dark:text-zinc-100 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug mb-3">
-                      <Link to={`/article/${item.id}`}>
+                      <Link to={`/${getCategorySlugName(item.category_hi)}/${item.id}`}>
                         {cardTitle}
                       </Link>
                     </h4>
                     <Link
-                      to={`/article/${item.id}`}
+                      to={`/${getCategorySlugName(item.category_hi)}/${item.id}`}
                       className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-red hover:text-brand-red-hover transition-colors uppercase tracking-wider mt-auto group-hover:translate-x-0.5 duration-200"
                     >
                       <span>{t('read')}</span>
