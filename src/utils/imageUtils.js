@@ -6,22 +6,27 @@
  * @param {number} [quality=80] - Compression quality (1-100)
  * @returns {string} Optimized URL
  */
-export const getOptimizedImageUrl = (url, width, format = 'auto', quality = 80) => {
-  if (!url || typeof url !== 'string') return '';
+export const getOptimizedImageUrl = (
+  url,
+  width,
+  format = "auto",
+  quality = 80,
+) => {
+  if (!url || typeof url !== "string") return "";
 
-  // If the image is served from Cloudflare R2 or custom domain (images.indorelatest.com)
-  if (url.includes('images.indorelatest.com')) {
-    const parsedUrl = new URL(url);
-    const pathname = parsedUrl.pathname;
-    
-    // Cloudflare Zone / Worker transformation URL structure
-    const options = [`format=${format}`, `quality=${quality}`];
-    if (width) options.push(`width=${width}`);
+  const normalizedUrl = url.trim();
 
-    return `${parsedUrl.origin}/cdn-cgi/image/${options.join(',')}${pathname}`;
+  if (!normalizedUrl) return "";
+
+  // Use the direct URL whenever possible because the proxy and public R2 domain are already serving the image.
+  if (
+    normalizedUrl.includes("images.indorelatest.com") ||
+    normalizedUrl.includes("/api/upload/image/")
+  ) {
+    return normalizedUrl;
   }
 
-  return url;
+  return normalizedUrl;
 };
 
 /**
@@ -30,16 +35,26 @@ export const getOptimizedImageUrl = (url, width, format = 'auto', quality = 80) 
  * @returns {string} Srcset string
  */
 export const getSrcSet = (url) => {
-  if (!url || typeof url !== 'string') return '';
-  if (!url.includes('images.indorelatest.com')) return '';
+  if (!url || typeof url !== "string") return "";
+
+  const normalizedUrl = url.trim();
+  if (!normalizedUrl) return "";
+
+  if (
+    !normalizedUrl.includes("images.indorelatest.com") &&
+    !normalizedUrl.includes("/api/upload/image/")
+  ) {
+    return "";
+  }
 
   const widths = [400, 800, 1200, 1600];
   return widths
-    .map((w) => `${getOptimizedImageUrl(url, w)} ${w}w`)
-    .join(', ');
+    .map((w) => `${getOptimizedImageUrl(normalizedUrl, w)} ${w}w`)
+    .join(", ");
 };
 
 /**
  * Standard sizes string for responsive news layouts
  */
-export const DEFAULT_SIZES = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px';
+export const DEFAULT_SIZES =
+  "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px";

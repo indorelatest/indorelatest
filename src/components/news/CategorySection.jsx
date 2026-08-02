@@ -17,7 +17,7 @@ export default function CategorySection({ categoryName, articles = [] }) {
     'विदेश': { hi: 'विदेश', en: 'World' },
     'सिंहस्थ': { hi: 'सिंहस्थ', en: 'Simhastha' },
     'टेक्नोलॉजी': { hi: 'टेक्नोलॉजी', en: 'Technology' },
-    'Jobs & Education': { hi: 'Jobs & Education', en: 'Jobs & Education' },
+    'नौकरी और शिक्षा': { hi: 'नौकरी और शिक्षा', en: 'Jobs & Education' },
   };
 
   const displayName = categoryTranslations[categoryName]?.[lang] || categoryName;
@@ -30,7 +30,7 @@ export default function CategorySection({ categoryName, articles = [] }) {
       case 'विदेश': return '/world';
       case 'सिंहस्थ': return '/simhastha';
       case 'टेक्नोलॉजी': return '/technology';
-      case 'Jobs & Education': return '/jobs-education';
+      case 'नौकरी और शिक्षा': return '/jobs-education';
       default: return `/category/${catName}`;
     }
   };

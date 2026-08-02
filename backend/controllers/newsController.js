@@ -1,5 +1,45 @@
-const News = require('../models/News');
-const { deleteFromR2 } = require('../utils/r2Storage');
+const News = require("../models/News");
+const { deleteFromR2 } = require("../utils/r2Storage");
+
+const normalizeArticleImageFields = (body = {}) => {
+  const normalized = { ...body };
+
+  if (normalized.id && typeof normalized.id === "string") {
+    normalized.id = normalized.id.trim();
+  }
+
+  if (normalized.title_hi && typeof normalized.title_hi === "string") {
+    normalized.title_hi = normalized.title_hi.trim();
+  }
+
+  if (normalized.title_en && typeof normalized.title_en === "string") {
+    normalized.title_en = normalized.title_en.trim();
+  }
+
+  if (normalized.summary_hi == null || normalized.summary_hi === "") {
+    normalized.summary_hi = normalized.content_hi?.slice(0, 180) || "";
+  }
+
+  if (normalized.summary_en == null || normalized.summary_en === "") {
+    normalized.summary_en = normalized.content_en?.slice(0, 180) || "";
+  }
+
+  if (normalized.category_hi == null || normalized.category_hi === "") {
+    normalized.category_hi = "इंदौर";
+  }
+
+  if (normalized.category_en == null || normalized.category_en === "") {
+    normalized.category_en = "Indore";
+  }
+
+  if (normalized.imageUrl && !normalized.image) {
+    normalized.image = normalized.imageUrl;
+  } else if (normalized.image && !normalized.imageUrl) {
+    normalized.imageUrl = normalized.image;
+  }
+
+  return normalized;
+};
 
 // ─── GET all news (with optional filters) ───────────────────────────────────
 const getAllNews = async (req, res) => {
@@ -9,14 +49,14 @@ const getAllNews = async (req, res) => {
 
     if (category) {
       query.$or = [
-        { category_hi: { $regex: category, $options: 'i' } },
-        { category_en: { $regex: category, $options: 'i' } },
+        { category_hi: { $regex: category, $options: "i" } },
+        { category_en: { $regex: category, $options: "i" } },
       ];
     }
 
     let sortOption = { createdAt: -1 };
-    if (sort === 'popular') sortOption = { views: -1 };
-    if (sort === 'oldest') sortOption = { createdAt: 1 };
+    if (sort === "popular") sortOption = { views: -1 };
+    if (sort === "oldest") sortOption = { createdAt: 1 };
 
     const limitNum = parseInt(limit) || 100;
 
@@ -41,7 +81,9 @@ const getFeaturedNews = async (req, res) => {
 const getTrendingNews = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 5;
-    const news = await News.find({ trending: true }).sort({ views: -1 }).limit(limit);
+    const news = await News.find({ trending: true })
+      .sort({ views: -1 })
+      .limit(limit);
     res.json({ success: true, data: news });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -73,7 +115,9 @@ const getLatestNews = async (req, res) => {
 // ─── GET breaking news ───────────────────────────────────────────────────────
 const getBreakingNews = async (req, res) => {
   try {
-    const news = await News.find({ breaking: true }).sort({ createdAt: -1 }).limit(10);
+    const news = await News.find({ breaking: true })
+      .sort({ createdAt: -1 })
+      .limit(10);
     // Fallback to latest if no breaking news is set
     if (news.length === 0) {
       const fallback = await News.find().sort({ createdAt: -1 }).limit(10);
@@ -92,13 +136,13 @@ const getNewsByCategory = async (req, res) => {
     const { sort } = req.query;
 
     let sortOption = { createdAt: -1 };
-    if (sort === 'popular') sortOption = { views: -1 };
-    if (sort === 'oldest') sortOption = { createdAt: 1 };
+    if (sort === "popular") sortOption = { views: -1 };
+    if (sort === "oldest") sortOption = { createdAt: 1 };
 
     const news = await News.find({
       $or: [
-        { category_hi: { $regex: name, $options: 'i' } },
-        { category_en: { $regex: name, $options: 'i' } },
+        { category_hi: { $regex: name, $options: "i" } },
+        { category_en: { $regex: name, $options: "i" } },
       ],
     }).sort(sortOption);
 
@@ -111,10 +155,10 @@ const getNewsByCategory = async (req, res) => {
 // ─── SEARCH news ─────────────────────────────────────────────────────────────
 const searchNews = async (req, res) => {
   try {
-    const { q, lang = 'hi' } = req.query;
+    const { q, lang = "hi" } = req.query;
     if (!q) return res.json({ success: true, data: [] });
 
-    const regex = new RegExp(q, 'i');
+    const regex = new RegExp(q, "i");
     const news = await News.find({
       $or: [
         { [`title_${lang}`]: regex },
@@ -136,7 +180,9 @@ const getNewsById = async (req, res) => {
   try {
     const news = await News.findOne({ id: req.params.id });
     if (!news) {
-      return res.status(404).json({ success: false, message: 'News not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "News not found" });
     }
     res.json({ success: true, data: news });
   } catch (error) {
@@ -150,9 +196,12 @@ const incrementView = async (req, res) => {
     const news = await News.findOneAndUpdate(
       { id: req.params.id },
       { $inc: { views: 1 } },
-      { new: true }
+      { new: true },
     );
-    if (!news) return res.status(404).json({ success: false, message: 'News not found' });
+    if (!news)
+      return res
+        .status(404)
+        .json({ success: false, message: "News not found" });
     res.json({ success: true, views: news.views });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -162,10 +211,7 @@ const incrementView = async (req, res) => {
 // ─── POST create article (admin) ─────────────────────────────────────────────
 const createNews = async (req, res) => {
   try {
-    const body = { ...req.body };
-    if (body.imageUrl && !body.image) {
-      body.image = body.imageUrl;
-    }
+    const body = normalizeArticleImageFields(req.body);
     const news = new News(body);
     const saved = await news.save();
     res.status(201).json({ success: true, data: saved });
@@ -177,17 +223,16 @@ const createNews = async (req, res) => {
 // ─── PUT update article (admin) ──────────────────────────────────────────────
 const updateNews = async (req, res) => {
   try {
-    const body = { ...req.body };
-    if (body.imageUrl && !body.image) {
-      body.image = body.imageUrl;
-    }
-    const news = await News.findOneAndUpdate(
-      { id: req.params.id },
-      body,
-      { new: true, runValidators: true }
-    );
-    if (!news) return res.status(404).json({ success: false, message: 'News not found' });
-    res.json({ success: true, data: news });
+    const body = normalizeArticleImageFields(req.body);
+    const news = await News.findOne({ id: req.params.id });
+    if (!news)
+      return res
+        .status(404)
+        .json({ success: false, message: "News not found" });
+
+    Object.assign(news, body);
+    const saved = await news.save();
+    res.json({ success: true, data: saved });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -197,18 +242,24 @@ const updateNews = async (req, res) => {
 const deleteNews = async (req, res) => {
   try {
     const news = await News.findOneAndDelete({ id: req.params.id });
-    if (!news) return res.status(404).json({ success: false, message: 'News not found' });
+    if (!news)
+      return res
+        .status(404)
+        .json({ success: false, message: "News not found" });
 
     // Clean up associated Cloudflare R2 image if imageKey exists
     if (news.imageKey) {
       try {
         await deleteFromR2(news.imageKey);
       } catch (err) {
-        console.warn(`Failed to clean up R2 image ${news.imageKey}:`, err.message);
+        console.warn(
+          `Failed to clean up R2 image ${news.imageKey}:`,
+          err.message,
+        );
       }
     }
 
-    res.json({ success: true, message: 'Article deleted successfully' });
+    res.json({ success: true, message: "Article deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -218,11 +269,11 @@ const deleteNews = async (req, res) => {
 const verifyPasscode = async (req, res) => {
   try {
     const { passcode } = req.body;
-    const correctPasscode = process.env.ADMIN_PASSCODE || 'admin123';
+    const correctPasscode = process.env.ADMIN_PASSCODE;
     if (passcode === correctPasscode) {
-      res.json({ success: true, message: 'Authenticated successfully' });
+      res.json({ success: true, message: "Authenticated successfully" });
     } else {
-      res.status(401).json({ success: false, message: 'Invalid passcode' });
+      res.status(401).json({ success: false, message: "Invalid passcode" });
     }
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -237,11 +288,17 @@ const getStats = async (req, res) => {
     const trendingCount = await News.countDocuments({ trending: true });
     const breakingCount = await News.countDocuments({ breaking: true });
     const totalViews = await News.aggregate([
-      { $group: { _id: null, total: { $sum: '$views' } } },
+      { $group: { _id: null, total: { $sum: "$views" } } },
     ]);
 
     const categoryStats = await News.aggregate([
-      { $group: { _id: '$category_en', count: { $sum: 1 }, views: { $sum: '$views' } } },
+      {
+        $group: {
+          _id: "$category_en",
+          count: { $sum: 1 },
+          views: { $sum: "$views" },
+        },
+      },
       { $sort: { count: -1 } },
     ]);
 

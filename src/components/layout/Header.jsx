@@ -20,7 +20,7 @@ export default function Header({ onSearchClick }) {
     { name_hi: 'विदेश', name_en: 'World', path: '/world' },
     { name_hi: 'सिंहस्थ', name_en: 'Simhastha', path: '/simhastha' },
     { name_hi: 'टेक्नोलॉजी', name_en: 'Technology', path: '/technology' },
-    { name_hi: 'Jobs & Education', name_en: 'Jobs & Education', path: '/jobs-education' },
+    { name_hi: 'नौकरी और शिक्षा', name_en: 'Jobs & Education', path: '/jobs-education' },
   ];
 
   useEffect(() => {
@@ -139,13 +139,13 @@ export default function Header({ onSearchClick }) {
           </div>
 
           {/* Admin Login yaha se kr lega salaaa  */}
-          <button
+          {/* <button
             onClick={()=>navigate('/admin')}
             className="p-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-brand-red dark:hover:text-brand-red hover:border-brand-red/30 transition-all cursor-pointer w-10 h-10 flex items-center justify-center "
             aria-label="Admin Login"
           >
             <User2 className="w-5 h-5" />
-          </button>
+          </button> */}
 
           <button
             onClick={onSearchClick}

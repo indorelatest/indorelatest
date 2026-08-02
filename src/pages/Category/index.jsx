@@ -30,14 +30,14 @@ export default function Category({ categoryName: propCategoryName }) {
     'विदेश': { hi: 'विदेश', en: 'World' },
     'सिंहस्थ': { hi: 'सिंहस्थ', en: 'Simhastha' },
     'टेक्नोलॉजी': { hi: 'टेक्नोलॉजी', en: 'Technology' },
-    'Jobs & Education': { hi: 'Jobs & Education', en: 'Jobs & Education' },
+    'नौकरी और शिक्षा': { hi: 'नौकरी और शिक्षा', en: 'Jobs & Education' },
     'indore': { hi: 'इंदौर', en: 'Indore' },
     'madhya pradesh': { hi: 'मध्यप्रदेश', en: 'Madhya Pradesh' },
     'india': { hi: 'देश', en: 'India' },
     'world': { hi: 'विदेश', en: 'World' },
     'simhastha': { hi: 'सिंहस्थ', en: 'Simhastha' },
     'technology': { hi: 'टेक्नोलॉजी', en: 'Technology' },
-    'jobs & education': { hi: 'Jobs & Education', en: 'Jobs & Education' }
+    'jobs & education': { hi: 'नौकरी और शिक्षा', en: 'Jobs & Education' }
   };
 
   // Safe lower-case mapping for lookups
