@@ -2,6 +2,7 @@ import React from 'react';
 import { Flame } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
+import { getCategorySlugName } from '../../utils/categoryHelper';
 
 export default function BreakingNewsTicker({ news = [] }) {
   const { lang, t } = useLanguage();
@@ -29,13 +30,26 @@ export default function BreakingNewsTicker({ news = [] }) {
     },
   ];
 
+  const getTickerCategorySlug = (item) => {
+    if (item.category_hi) {
+      return getCategorySlugName(item.category_hi);
+    }
+    if (item.id && typeof item.id === 'string') {
+      if (item.id.startsWith('indore-')) return 'indore';
+      if (item.id.startsWith('mp-')) return 'madhya-pradesh';
+      if (item.id.startsWith('india-')) return 'india';
+      if (item.id.startsWith('tech-')) return 'technology';
+    }
+    return 'article';
+  };
+
   return (
     <div className="w-full bg-brand-red text-white h-10 md:h-12 flex items-center overflow-hidden border-y border-brand-red shadow-md font-sans transition-colors">
       
       {/* Label */}
-      <div className="bg-zinc-950 px-4 md:px-6 h-full flex items-center gap-1.5 md:gap-2 shrink-0 z-10 select-none border-r border-brand-red font-extrabold tracking-wider text-xs md:text-sm uppercase italic">
+      <div className="bg-zinc-950 px-2.5 md:px-6 h-full flex items-center gap-1.5 md:gap-2 shrink-0 z-10 select-none border-r border-brand-red font-extrabold tracking-wider text-xs md:text-sm uppercase italic">
         <Flame className="w-4.5 h-4.5 text-brand-red animate-pulse" />
-        <span>{t('breakingNews')}</span>
+        <span className="hidden md:inline">{t('breakingNews')}</span>
       </div>
 
       {/* Scrolling Container */}
@@ -44,7 +58,7 @@ export default function BreakingNewsTicker({ news = [] }) {
           {[...breakingNews, ...breakingNews].map((item, index) => (
             <Link
               key={`${item.id}-${index}`}
-              to={`/article/${item.id}`}
+              to={`/${getTickerCategorySlug(item)}/${item.id}`}
               className="text-xs md:text-sm font-semibold tracking-wide hover:underline inline-flex items-center gap-2"
             >
               <span className="w-1.5 h-1.5 bg-white rounded-full inline-block shrink-0" />

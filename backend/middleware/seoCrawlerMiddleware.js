@@ -25,7 +25,7 @@ const seoCrawlerMiddleware = async (req, res, next) => {
   const userAgent = req.headers['user-agent'] || '';
 
   // Only intercept article routes for crawler user agents
-  const articleMatch = req.path.match(/^\/(article|news)\/([^/]+)/);
+  const articleMatch = req.path.match(/^\/(article|news|indore|madhya-pradesh|india|world|simhastha|technology|jobs-education)\/([^/]+)/);
 
   if (!articleMatch || !isCrawler(userAgent)) {
     return next();
@@ -40,7 +40,21 @@ const seoCrawlerMiddleware = async (req, res, next) => {
     const title = article.title_hi || article.title_en || 'Indore Latest News';
     const description = article.summary_hi || article.summary_en || title;
     const imageUrl = article.imageUrl || article.image || 'https://images.indorelatest.com/logo.png';
-    const siteUrl = `https://indorelatest.com/article/${article.id}`;
+    
+    const getCategorySlugName = (catHi) => {
+      switch (catHi) {
+        case 'इंदौर': return 'indore';
+        case 'मध्यप्रदेश': return 'madhya-pradesh';
+        case 'देश': return 'india';
+        case 'विदेश': return 'world';
+        case 'सिंहस्थ': return 'simhastha';
+        case 'टेक्नोलॉजी': return 'technology';
+        case 'Jobs & Education': return 'jobs-education';
+        default: return 'article';
+      }
+    };
+    const categorySlug = getCategorySlugName(article.category_hi);
+    const siteUrl = `https://indorelatest.com/${categorySlug}/${article.id}`;
     const publishedIso = article.publishedAt ? new Date(article.publishedAt).toISOString() : new Date().toISOString();
     const modifiedIso = article.updatedAt ? new Date(article.updatedAt).toISOString() : publishedIso;
 
