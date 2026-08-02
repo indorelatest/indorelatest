@@ -10,9 +10,10 @@ import ResponsiveImage from '../../components/common/ResponsiveImage';
 import { useLanguage } from '../../context/LanguageContext';
 import { ArrowLeft, User, Calendar, Tag, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getCategorySlugName } from '../../utils/categoryHelper';
 
 export default function News() {
-  const { id } = useParams();
+  const { id, categorySlug } = useParams();
   const navigate = useNavigate();
   const { lang, t } = useLanguage();
   const { getNewsById, getRelatedNews, getTrendingNews, getMostReadNews, getLatestNews, loading } = useNews();
@@ -30,9 +31,20 @@ export default function News() {
     }
   };
 
+  const article = getNewsById(id);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+
+  useEffect(() => {
+    if (!loading && article) {
+      const correctSlug = getCategorySlugName(article.category_hi);
+      if (categorySlug !== correctSlug) {
+        navigate(`/${correctSlug}/${id}`, { replace: true });
+      }
+    }
+  }, [loading, article, categorySlug, id, navigate]);
 
   if (loading) {
     return (
@@ -49,8 +61,6 @@ export default function News() {
       </div>
     );
   }
-
-  const article = getNewsById(id);
 
   if (!article) {
     return (
@@ -99,7 +109,7 @@ export default function News() {
       <SEO
         title={title}
         description={summary || title}
-        canonicalUrl={`https://indorelatest.com/article/${article.id}`}
+        canonicalUrl={`https://indorelatest.com/${getCategorySlugName(article.category_hi)}/${article.id}`}
         imageUrl={heroImageSrc}
         publishedAt={article.publishedAt || article.createdAt}
         updatedAt={article.updatedAt}

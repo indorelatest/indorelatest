@@ -4,6 +4,7 @@ import { Calendar, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
 import ResponsiveImage from '../common/ResponsiveImage';
+import { getCategorySlugName } from '../../utils/categoryHelper';
 
 export default function NewsCard({ item }) {
   const { lang, t } = useLanguage();
@@ -51,19 +52,19 @@ export default function NewsCard({ item }) {
 
         {/* Title / Headline */}
         <h3 className="font-display font-bold text-base md:text-lg text-zinc-900 dark:text-zinc-50 group-hover:text-brand-red transition-colors duration-200 line-clamp-2 leading-snug mb-2 mb-auto">
-          <Link to={`/article/${id}`} className="focus:outline-none">
+          <Link to={`/${getCategorySlugName(item.category_hi)}/${id}`} className="focus:outline-none">
             {title}
           </Link>
         </h3>
 
         {/* Two-Line Summary */}
-        <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed mb-4">
+        <p className="text-xs md:text-sm text-zinc-550 dark:text-zinc-400 line-clamp-2 leading-relaxed mb-4">
           {summary}
         </p>
 
         {/* Read More button */}
         <Link
-          to={`/article/${id}`}
+          to={`/${getCategorySlugName(item.category_hi)}/${id}`}
           className="inline-flex items-center gap-1 text-xs font-bold text-brand-red hover:text-brand-red-hover transition-colors uppercase tracking-wider mt-auto group-hover:translate-x-1 duration-200"
         >
           <span>{t('readMore')}</span>

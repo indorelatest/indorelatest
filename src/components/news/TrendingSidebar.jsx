@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TrendingUp, Award, Clock } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { getCategorySlugName } from '../../utils/categoryHelper';
 
 export default function TrendingSidebar({ trendingNews = [], mostReadNews = [], latestNews = [] }) {
   const { lang, t } = useLanguage();
@@ -81,7 +82,7 @@ export default function TrendingSidebar({ trendingNews = [], mostReadNews = [], 
                 {/* Content */}
                 <div className="min-w-0">
                   <Link
-                    to={`/article/${item.id}`}
+                    to={`/${getCategorySlugName(item.category_hi)}/${item.id}`}
                     className="font-display font-bold text-xs md:text-sm text-zinc-800 dark:text-zinc-100 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug"
                   >
                     {title}

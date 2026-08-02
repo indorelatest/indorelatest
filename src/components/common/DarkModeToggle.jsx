@@ -29,7 +29,7 @@ export default function DarkModeToggle() {
   return (
     <button
       onClick={() => setIsDark(!isDark)}
-      className="relative p-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-brand-red dark:hover:text-brand-red transition-colors focus:outline-none cursor-pointer overflow-hidden w-10 h-10 flex items-center justify-center"
+      className="relative rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-brand-red dark:hover:text-brand-red transition-colors focus:outline-none cursor-pointer overflow-hidden w-9 h-9 md:w-10 md:h-10 flex items-center justify-center shrink-0"
       aria-label="Toggle Dark Mode"
     >
       <AnimatePresence mode="wait" initial={false}>
