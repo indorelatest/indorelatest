@@ -14,7 +14,7 @@ export default function ShareButtons({ title = '' }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const shareText = encodeURIComponent(`डेली न्यूज़ पर पढ़ें: ${title}`);
+  const shareText = encodeURIComponent(`इंदौर लेटेस्ट पर पढ़ें: ${title}`);
   const currentUrl = encodeURIComponent(window.location.href);
 
   return (

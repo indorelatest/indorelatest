@@ -195,7 +195,7 @@ export default function News() {
               {paragraphs.map((para, idx) => (
                 <p
                   key={idx}
-                  className="mb-6 text-base md:text-lg leading-relaxed text-zinc-850 dark:text-zinc-200 font-sans"
+                  className="mb-6 text-[1.015rem] md:text-lg leading-relaxed text-zinc-850 dark:text-zinc-200 font-sans"
                 >
                   {para}
                 </p>
