@@ -39,7 +39,10 @@ const seoCrawlerMiddleware = async (req, res, next) => {
 
     const title = article.title_hi || article.title_en || 'Indore Latest News';
     const description = article.summary_hi || article.summary_en || title;
-    const imageUrl = article.imageUrl || article.image || 'https://images.indorelatest.com/logo.png';
+    let imageUrl = article.imageUrl || article.image || 'https://indorelatest.com/logo.png';
+    if (imageUrl && !imageUrl.startsWith('http')) {
+      imageUrl = `https://indorelatest.com${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+    }
     
     const getCategorySlugName = (catHi) => {
       switch (catHi) {

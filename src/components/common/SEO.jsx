@@ -15,7 +15,10 @@ export default function SEO({
   const siteName = 'Indore Latest';
   const fullTitle = title ? `${title} | ${siteName}` : siteName;
   const metaDescription = description || 'इंदौर और मध्यप्रदेश की ताज़ा खबरें, लाइव अपडेट्स, और समाचार | Indore Latest News';
-  const metaImage = imageUrl || 'https://images.indorelatest.com/logo.png';
+  let metaImage = imageUrl || 'https://indorelatest.com/logo.png';
+  if (metaImage && !metaImage.startsWith('http')) {
+    metaImage = `https://indorelatest.com${metaImage.startsWith('/') ? '' : '/'}${metaImage}`;
+  }
   const pageUrl = canonicalUrl || (typeof window !== 'undefined' ? window.location.href : 'https://indorelatest.com');
 
   useEffect(() => {

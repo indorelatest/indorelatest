@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Search, Calendar, Globe, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Search, Calendar } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import DarkModeToggle from '../common/DarkModeToggle';
 import { useLanguage } from '../../context/LanguageContext';
@@ -7,9 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Header({ onSearchClick }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
-  const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { lang, toggleLanguage, t } = useLanguage();
 
@@ -31,25 +29,9 @@ export default function Header({ onSearchClick }) {
     setFormattedDate(dateStr);
   }, [lang]);
 
-  // Close language dropdown on outside click
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsLangDropdownOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   const handleMobileNavClick = (path) => {
     setIsMobileMenuOpen(false);
     navigate(path);
-  };
-
-  const handleLangSelect = (selectedLang) => {
-    toggleLanguage(selectedLang);
-    setIsLangDropdownOpen(false);
   };
 
   return (
@@ -86,49 +68,14 @@ export default function Header({ onSearchClick }) {
         {/* Actions (Language Dropdown, Search, Dark Mode, Hamburger) */}
         <div className="flex items-center gap-1 md:gap-3">
           
-          {/* Language Selector Dropdown */}
-          <div className="relative font-sans" ref={dropdownRef}>
-            <button
-              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className="flex items-center justify-center md:gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-brand-red dark:hover:text-brand-red hover:border-brand-red/20 transition-all cursor-pointer w-9 h-9 md:w-auto md:h-10 md:px-3 md:py-2 shrink-0"
-              aria-expanded={isLangDropdownOpen}
-              aria-haspopup="true"
-              aria-label="Toggle Language"
-            >
-              <Globe className="w-4.5 h-4.5 md:w-4 md:h-4 text-zinc-500 dark:text-zinc-400 shrink-0" />
-              <span className="hidden md:inline">{lang === 'hi' ? 'हिंदी' : 'English'}</span>
-              <ChevronDown className={`hidden md:inline w-3.5 h-3.5 text-zinc-400 transition-transform ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            <AnimatePresence>
-              {isLangDropdownOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute right-0 mt-2 w-32 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-xl py-1 z-55 overflow-hidden"
-                >
-                  <button
-                    onClick={() => handleLangSelect('en')}
-                    className={`w-full text-left px-4 py-2.5 text-xs font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer ${
-                      lang === 'en' ? 'text-brand-red bg-zinc-50/50 dark:bg-zinc-800/30' : 'text-zinc-500 dark:text-zinc-400'
-                    }`}
-                  >
-                    English
-                  </button>
-                  <button
-                    onClick={() => handleLangSelect('hi')}
-                    className={`w-full text-left px-4 py-2.5 text-xs font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer ${
-                      lang === 'hi' ? 'text-brand-red bg-zinc-50/50 dark:bg-zinc-800/30' : 'text-zinc-500 dark:text-zinc-400'
-                    }`}
-                  >
-                    Hindi
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          {/* Language Selector Toggle */}
+          <button
+            onClick={() => toggleLanguage(lang === 'hi' ? 'en' : 'hi')}
+            className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-brand-red dark:hover:text-brand-red hover:border-brand-red/30 transition-all cursor-pointer h-8 md:h-9 px-2.5 flex items-center justify-center shrink-0 font-sans font-bold text-[10px] md:text-xs"
+            aria-label="Toggle Language"
+          >
+            {lang === 'hi' ? 'हिंदी' : 'ENG'}
+          </button>
 
 
           <button
