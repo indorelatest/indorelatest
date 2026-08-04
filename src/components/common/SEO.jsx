@@ -5,6 +5,9 @@ export default function SEO({
   description,
   canonicalUrl,
   imageUrl,
+  imageWidth,
+  imageHeight,
+  imageAlt,
   type = 'article',
   publishedAt,
   updatedAt,
@@ -56,6 +59,10 @@ export default function SEO({
     setMetaTag('meta[property="og:title"]', 'content', title || siteName);
     setMetaTag('meta[property="og:description"]', 'content', metaDescription);
     setMetaTag('meta[property="og:image"]', 'content', metaImage);
+    setMetaTag('meta[property="og:image:secure_url"]', 'content', metaImage);
+    setMetaTag('meta[property="og:image:alt"]', 'content', imageAlt || title || siteName);
+    if (imageWidth) setMetaTag('meta[property="og:image:width"]', 'content', String(imageWidth));
+    if (imageHeight) setMetaTag('meta[property="og:image:height"]', 'content', String(imageHeight));
     setMetaTag('meta[property="og:url"]', 'content', pageUrl);
     setMetaTag('meta[property="og:type"]', 'content', type);
     setMetaTag('meta[property="og:site_name"]', 'content', siteName);
@@ -144,7 +151,7 @@ export default function SEO({
       '@type': 'BreadcrumbList',
       'itemListElement': listItems,
     });
-  }, [title, description, canonicalUrl, imageUrl, type, publishedAt, updatedAt, author, category]);
+  }, [title, description, canonicalUrl, imageUrl, imageWidth, imageHeight, imageAlt, type, publishedAt, updatedAt, author, category]);
 
   return null;
 }

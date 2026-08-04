@@ -10,6 +10,7 @@ import {
   AlertCircle,
   Loader2,
 } from "lucide-react";
+import { renderHighlightedLinks, textHasLinks } from "../../utils/linkifyText";
 
 const CATEGORIES = [
   { hi: "इंदौर", en: "Indore" },
@@ -52,6 +53,26 @@ const EMPTY = {
 
 const getPreviewUrl = (articleData = {}) => {
   return articleData?.imageUrl || articleData?.image || "";
+};
+
+const ContentPreview = ({ value, label }) => {
+  if (!textHasLinks(value)) return null;
+
+  return (
+    <div className="mt-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/60 p-3">
+      <div className="text-[11px] font-bold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-2">
+        {label}
+      </div>
+      <div className="space-y-2 text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
+        {String(value)
+          .split("\n")
+          .filter(Boolean)
+          .map((line, index) => (
+            <p key={index}>{renderHighlightedLinks(line)}</p>
+          ))}
+      </div>
+    </div>
+  );
 };
 
 export default function AdminArticleForm({ article, onSave, onCancel }) {
@@ -367,6 +388,7 @@ useEffect(() => {
                 placeholder="हिंदी में पूर्ण समाचार लिखें..."
                 className={`${inputCls} resize-y`}
               />
+              <ContentPreview value={form.content_hi} label="Hindi Link Preview" />
             </div>
             <div>
               <label className={labelCls}>Full Content (English)</label>
@@ -377,6 +399,7 @@ useEffect(() => {
                 placeholder="Write full article in English..."
                 className={`${inputCls} resize-y`}
               />
+              <ContentPreview value={form.content_en} label="English Link Preview" />
             </div>
           </div>
         )}

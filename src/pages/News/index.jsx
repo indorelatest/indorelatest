@@ -11,6 +11,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { ArrowLeft, User, Calendar, Tag, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getCategorySlugName } from '../../utils/categoryHelper';
+import { renderHighlightedLinks } from '../../utils/linkifyText';
 
 export default function News() {
   const { id, categorySlug } = useParams();
@@ -39,7 +40,7 @@ export default function News() {
 
   useEffect(() => {
     if (!loading && article) {
-      const correctSlug = getCategorySlugName(article.category_hi);
+      const correctSlug = getCategorySlugName(article.category_hi, article.category_en);
       if (categorySlug !== correctSlug) {
         navigate(`/${correctSlug}/${id}`, { replace: true });
       }
@@ -109,8 +110,11 @@ export default function News() {
       <SEO
         title={title}
         description={summary || title}
-        canonicalUrl={`https://indorelatest.com/${getCategorySlugName(article.category_hi)}/${article.id}`}
+        canonicalUrl={`https://indorelatest.com/${getCategorySlugName(article.category_hi, article.category_en)}/${article.id}`}
         imageUrl={heroImageSrc}
+        imageWidth={article.width || 1200}
+        imageHeight={article.height || 675}
+        imageAlt={article.alt || title}
         publishedAt={article.publishedAt || article.createdAt}
         updatedAt={article.updatedAt}
         author={author}
@@ -197,7 +201,7 @@ export default function News() {
                   key={idx}
                   className="mb-6 text-[1.015rem] md:text-lg leading-relaxed text-zinc-850 dark:text-zinc-200 font-sans"
                 >
-                  {para}
+                  {renderHighlightedLinks(para)}
                 </p>
               ))}
             </div>
